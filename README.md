@@ -1,4 +1,4 @@
-# Extrator de Código de Barras para PDFs
+# Extrator de Código de Barras para PDFs - Backend
 
 API backend em Node.js para extrair códigos de barras automaticamente de arquivos PDF, especialmente focado em boletos bancários brasileiros.
 
