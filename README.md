@@ -1,62 +1,135 @@
-# Extrator de Código de Barras para PDFs - Backend
+# Boleto Extractor — Backend
 
-API backend em Node.js para extrair códigos de barras automaticamente de arquivos PDF, especialmente focado em boletos bancários brasileiros.
+A Node.js REST API designed to extract payment barcode numbers from Brazilian bank slip PDFs (*boletos bancários*).
 
----
+Built with **Express, Multer, and pdf-parse**, the application processes uploaded PDF documents and identifies common Brazilian payment code patterns.
 
-## Funcionalidades
+**[Frontend Repository](https://github.com/jlcambraia/boleto-extractor-frontend)** · **[Live Frontend Demo](https://boleto-extractor-frontend-hf84.vercel.app/)**
 
-- Upload de arquivos PDF via endpoint `/api/extract-barcode`
-- Extração automática do código de barras a partir do texto extraído do PDF
-- Suporte a diferentes formatos comuns de códigos de barras de boletos
-- Limite de tamanho do arquivo: 10 MB
-- Tratamento de PDFs protegidos por senha com resposta apropriada
-- Endpoint `/api/health` para verificação do status da API
-- Validação e tratamento de erros robustos (ex: arquivos inválidos, limites de tamanho)
+## Overview
 
----
+This backend provides PDF processing functionality for the Boleto Extractor application.
 
-## Tecnologias utilizadas
+It accepts uploaded documents, extracts their textual content, and uses pattern matching to identify payment information.
+
+The project demonstrates file upload handling, document parsing, backend validation, and API integration.
+
+## Features
+
+- PDF uploads through a REST endpoint
+- File size limit of 10 MB
+- PDF text extraction using pdf-parse
+- Regular-expression matching for Brazilian payment codes
+- Support for common bank slip code formats
+- Fallback matching for long numeric sequences
+- Error handling for invalid documents
+- Handling of unsupported password-protected PDFs
+- Health-check endpoint
+- CORS support for frontend integration
+
+## Tech Stack
 
 - Node.js
-- Express.js
-- Multer (upload de arquivos)
-- pdf-parse (extração de texto de PDFs)
-- CORS para permitir chamadas de frontend externos
-- dotenv para configuração de variáveis de ambiente
+- Express 4
+- JavaScript
+- Multer
+- pdf-parse
+- Regular Expressions
+- dotenv
+- CORS
 
----
+## API Endpoints
 
-## Como funciona a extração do código de barras
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| POST | `/api/extract-barcode` | Upload PDF and extract payment code |
+| GET | `/api/health` | Check API status |
 
-O backend usa a biblioteca `pdf-parse` para extrair o texto do PDF. Em seguida, aplica expressões regulares que identificam os padrões comuns dos códigos de barras de boletos brasileiros (linha digitável e código direto). Caso nenhum padrão seja identificado, tenta capturar sequências longas de números como fallback.
+## Extraction Process
 
----
+```text
+PDF Upload
+    |
+    v
+Multer File Validation
+    |
+    v
+PDF Text Extraction
+    |
+    v
+Regular Expression Matching
+    |
+    v
+Payment Code Identification
+    |
+    v
+JSON API Response
+```
 
-## Limitações
+### Extraction Strategy
 
-- PDFs protegidos por senha ou criptografados **não são suportados**.
-- Apenas arquivos PDF são aceitos (limite de 10MB).
-- O extrator é focado em códigos de barras no formato brasileiro, pode não funcionar para outros tipos.
+1. Receive a PDF document through the upload endpoint.
+2. Extract readable text using `pdf-parse`.
+3. Search for common Brazilian payment code patterns.
+4. Attempt fallback matching when necessary.
+5. Return the extracted result or an appropriate error response.
 
----
+This approach focuses on extracting payment codes from text embedded in PDFs. It is not a general-purpose image barcode scanner.
 
-## Tratamento de erros
+## Getting Started
 
-O servidor trata erros de upload, tamanho de arquivo excedido, arquivos inválidos e falhas internas, retornando mensagens claras para o cliente.
+Requires Node.js 16 or later and npm.
 
----
+```bash
+git clone https://github.com/jlcambraia/boleto-extractor-backend.git
+cd boleto-extractor-backend
+npm install
+npm run dev
+```
 
-## Contato
+To start without nodemon:
 
-Caso tenha dúvidas ou queira contribuir, abra uma issue ou envie um pull request.
+```bash
+npm start
+```
 
----
+The project starts through `server.js`. Check its configuration for the active server port.
 
-## Licença
+## API Usage
 
-MIT License — sinta-se à vontade para usar e modificar conforme sua necessidade.
+Submit a PDF using the extraction endpoint.
 
----
+The request must use `multipart/form-data` with the upload field expected by the server's Multer configuration.
 
-**Desenvolvido com ❤️ por João Luiz Cambraia**
+The response contains the extraction result or an error message.
+
+## Validation and Limitations
+
+- Only PDF documents are accepted
+- Maximum upload size: 10 MB
+- Password-protected or encrypted PDFs are unsupported
+- Extraction is optimized for Brazilian bank slip formats
+- Image-only scanned PDFs may require OCR, which is not part of the documented extraction flow
+
+## Error Handling
+
+The application handles invalid file formats, oversized uploads, protected PDFs, unrecognized payment codes, and processing failures.
+
+## Related Repository
+
+[Boleto Extractor — Frontend](https://github.com/jlcambraia/boleto-extractor-frontend)
+
+## Potential Improvements
+
+- Optical Character Recognition (OCR)
+- Batch document processing
+- Automated extraction tests
+- Additional payment code formats
+- Structured extraction logs
+- More detailed API documentation
+
+## Author
+
+**João Luiz Cambraia**
+
+[GitHub](https://github.com/jlcambraia) · [LinkedIn](https://www.linkedin.com/in/joaoluizcambraia/)
